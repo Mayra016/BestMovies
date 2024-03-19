@@ -9,4 +9,9 @@ public interface MovieI {
 	
 	public void setGenre(byte newGenre);
 	public short getGenre();
+	
+	public void setImageURL(String newURL);
+	public String getImageURL();
+	
+	public String buildURL(String URL);
 }

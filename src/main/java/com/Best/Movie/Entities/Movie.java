@@ -6,14 +6,21 @@ public class Movie implements MovieI{
 	private String movieName;	
 	private short popularity;
 	private short genre;
+	private String imageURL;
 	
 	public Movie() {
 		
 	}
 	
-	public Movie(String movieName, short popularity, short genre) {
+	public Movie(String movieName, short popularity, short genre, String imageURL) {
 		this.movieName = movieName;
 		this.popularity = popularity;
+		this.imageURL = buildURL(imageURL);
+	}
+
+	public String buildURL(String URL) {
+		String baseURL = "https://image.tmdb.org/t/p/w500";
+		return baseURL.concat(URL);
 	}
 
 	@Override
@@ -45,5 +52,16 @@ public class Movie implements MovieI{
 	@Override
 	public short getGenre() {
 		return this.genre;
+	}
+
+	@Override
+	public void setImageURL(String newURL) {
+		this.imageURL = newURL;
+		
+	}
+
+	@Override
+	public String getImageURL() {
+		return this.imageURL;
 	}
 }

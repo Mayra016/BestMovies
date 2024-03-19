@@ -1,5 +1,6 @@
 package com.Best.Movie.Controllers;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,13 +16,13 @@ public class APIController {
 	MovieService movieService;
 	
 	@PostMapping("/checkAnswer")
-	public ResponseEntity<String> checkAnswer(@RequestBody String playerAnswer) {
-		if (movieService.checkAnswer(playerAnswer)) {
+	public String checkAnswer(@RequestBody JSONObject playerAnswer) {
+		if (movieService.checkAnswer(playerAnswer.getString("playerAnswer"))) {
 			movieService.calculateScore();
-			return ResponseEntity.ok("TRUE");
+			return "redirect:/level";
 		} else {
 			movieService.resetGame();
-			return ResponseEntity.ok("FALSE");
+			return "redirect:/lost";
 		}		
 	}
 }

@@ -55,33 +55,18 @@ public class SecurityConfig extends WebSecurityConfiguration {
 	@Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http
-        	.headers(headers -> headers
-                .frameOptions(frameOptions -> frameOptions
-                    .disable()
-                )
-            )
         	.cors().configurationSource(corsConfigurationSource())
-        	.and()
-            .requiresChannel()
-            .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null)
-            .requiresSecure()
-	        .and()
-	        .authorizeRequests()
 	        .and()    
 	        .authorizeRequests(requests -> requests
                     .requestMatchers(new AntPathRequestMatcher("/menu/**")).permitAll()
-                    .requestMatchers(new AntPathRequestMatcher("/{level}/**")).permitAll()
+                    .requestMatchers(new AntPathRequestMatcher("/checkAnswer/**")).permitAll()
                     .requestMatchers(new AntPathRequestMatcher("/lost")).permitAll()
                     .requestMatchers(new AntPathRequestMatcher("/infos")).permitAll()
                     .requestMatchers(new AntPathRequestMatcher("/languages")).permitAll()
                     .requestMatchers(new AntPathRequestMatcher("/css/**")).permitAll()
                     .requestMatchers(new AntPathRequestMatcher("/images/**")).permitAll()
-                    .requestMatchers(new AntPathRequestMatcher("/levels")).authenticated()
-                    .requestMatchers(new AntPathRequestMatcher("/updateData/**")).authenticated()
-                    .requestMatchers(new AntPathRequestMatcher("/update/**")).authenticated()
-                    .requestMatchers(new AntPathRequestMatcher("/add/**")).authenticated()
-                    .requestMatchers(new AntPathRequestMatcher("/delete/**")).authenticated()
-                    .anyRequest().authenticated())
+                    .requestMatchers(new AntPathRequestMatcher("/level/**")).permitAll()
+                    .anyRequest().permitAll())
                 .formLogin()
                     .successHandler(new SavedRequestAwareAuthenticationSuccessHandler())
       	          .permitAll()
@@ -91,7 +76,20 @@ public class SecurityConfig extends WebSecurityConfiguration {
       	          .permitAll()
       	          .and()
       	      .exceptionHandling()
-      	      	.accessDeniedPage("/login");
+                .authenticationEntryPoint((request, response, authException) -> {
+                    // Aquí puedes registrar o loguear información sobre la excepción de autenticación
+                    // Por ejemplo, puedes imprimir la pila de llamadas para obtener detalles sobre el error
+                    authException.printStackTrace();
+                    // Luego, puedes responder con un mensaje de error personalizado o redirigir a una página de error
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error de autenticación: " + authException.getMessage());
+                })
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    // Aquí puedes registrar o loguear información sobre la excepción de acceso denegado
+                    // Por ejemplo, puedes imprimir la pila de llamadas para obtener detalles sobre el error
+                    accessDeniedException.printStackTrace();
+                    // Luego, puedes responder con un mensaje de error personalizado o redirigir a una página de error
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "Acceso denegado: " + accessDeniedException.getMessage());
+                });
 
 
             return http.build();
@@ -101,13 +99,8 @@ public class SecurityConfig extends WebSecurityConfiguration {
     @Bean
     private static CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("https://peculiaridadesdelmundo.blogspot.com");
-        configuration.addAllowedOrigin("https://peculiaridadesdomundoblog.blogspot.com");
-        configuration.addAllowedOrigin("https://besonderheitenderwelt.blogspot.com");
-        configuration.addAllowedOrigin("https://peculiaritiesoftheworld.blogspot.com");
         configuration.addAllowedOrigin("http://localhost:8080"); 
         configuration.addAllowedOrigin("http://localhost:8443"); 
-        configuration.addAllowedOrigin("https://guesswordgame.onrender.com/"); 
         configuration.addAllowedMethod("GET");
         configuration.addAllowedMethod("POST");
         configuration.addAllowedHeader("Access-Control-Allow-Headers");
@@ -120,12 +113,5 @@ public class SecurityConfig extends WebSecurityConfiguration {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-    
-/*
-    @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return authenticationManagerBean();
-    }
-*/
 }   
     

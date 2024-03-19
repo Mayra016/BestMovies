@@ -8,6 +8,7 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.Best.Movie.Entities.Movie;
@@ -26,10 +27,12 @@ public class MovieService{
 	private List<Movie> levelMove = new ArrayList<>();
 	private int score = 0;
 	private boolean firstLevel = true;
+	@Value("${bearerToken}")
+	private String bearerToken;
 	
 	public void setRandomMovies() throws URISyntaxException {
 		int statusCode;
-    
+		bearerToken = "Bearer " + bearerToken;
 	    // HTTP client creation
 	    HttpClient httpClient = HttpClient.newHttpClient();
 	
@@ -37,7 +40,7 @@ public class MovieService{
 	    HttpRequest request = HttpRequest.newBuilder()
 	    	    .uri(URI.create("https://api.themoviedb.org/3/trending/movie/day?language=en-US"))
 	    	    .header("accept", "application/json")
-	    	    .header("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMmNkYjg4ZTRjOTFjYzNhY2I2NzdjYWYzYWJlYjFmNSIsInN1YiI6IjY1ZjM0OTk3MzU4MThmMDE4OGQxZDQ5MCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.dc8SH43CQCmbIKS_elYLi-Lo2rT4DJ8L8pVdOl7Lnyk")
+	    	    .header("Authorization", bearerToken)
 	    	    .method("GET", HttpRequest.BodyPublishers.noBody())
 	    	    .build();
 	    
@@ -57,7 +60,8 @@ public class MovieService{
 	        	short popularity = (short) movie.path("popularity").asInt();
 	        	JsonNode genres = movie.path("genre_ids");
 	        	short genre = (short) genres.get(0).asInt();
-	        	Movie newMovie = new Movie(title, popularity, genre);
+	        	String imageURL = movie.path("poster_path").asText();
+	        	Movie newMovie = new Movie(title, popularity, genre, imageURL);
 	        	
 	        	if (this.playedMovies == null || !this.playedMovies.contains(newMovie)) {
 	        		this.availableMovies.add(newMovie);
@@ -70,6 +74,7 @@ public class MovieService{
 	    
 		}
 	}
+	
 	
 	public List<Movie> getLevel() {
 		movie1 = this.availableMovies.get(0);
@@ -89,9 +94,11 @@ public class MovieService{
 	public boolean checkAnswer(String playerAnswer) {
 		
 		if ( playerAnswer.equalsIgnoreCase(this.movie1.getMovieName()) && this.movie1.getPopularity() >= this.movie2.getPopularity() ) {
+			System.out.println("ANSWER = " + movie1.getMovieName());
 			return true;
 		}
 		if ( playerAnswer.equalsIgnoreCase(this.movie2.getMovieName()) && this.movie1.getPopularity() <= this.movie2.getPopularity() ) {
+			System.out.println("ANSWER = " + movie2.getMovieName());
 			return true;
 		}
 		if (this.firstLevel) {
@@ -119,5 +126,4 @@ public class MovieService{
 			return false;
 		}
 	}
-
 }
