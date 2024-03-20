@@ -1,10 +1,10 @@
 package com.Best.Movie.Controllers;
 
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.Best.Movie.Services.MovieService;
@@ -14,15 +14,17 @@ public class APIController {
 
 	@Autowired
 	MovieService movieService;
-	
-	@PostMapping("/checkAnswer")
-	public String checkAnswer(@RequestBody JSONObject playerAnswer) {
-		if (movieService.checkAnswer(playerAnswer.getString("playerAnswer"))) {
+
+	@GetMapping("/checkAnswer/{playerAnswer}")
+    public ResponseEntity<String> checkAnswer(@PathVariable String playerAnswer) {
+		System.out.println("PLAYER ANSWER: " + playerAnswer);
+		if (movieService.checkAnswer(playerAnswer)) {
+			System.out.println("PLAYER ANSWER: " + playerAnswer);
 			movieService.calculateScore();
-			return "redirect:/level";
-		} else {
-			movieService.resetGame();
-			return "redirect:/lost";
-		}		
-	}
+            return ResponseEntity.status(HttpStatus.OK).body("TRUE");
+        } else {
+        	movieService.resetGame();
+            return ResponseEntity.status(HttpStatus.OK).body("FALSE");
+        }       
+    }
 }

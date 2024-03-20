@@ -10,7 +10,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 
+import com.Best.Movie.Controllers.APIController;
 import com.Best.Movie.Entities.Movie;
 import com.Best.Movie.Services.MovieService;
 
@@ -20,6 +23,8 @@ public class MovieServiceTest {
 	@InjectMocks
 	MovieService movieService;
 
+	@InjectMocks
+	APIController apiController;
 	
 	@BeforeEach
 	public void init() {
@@ -60,5 +65,13 @@ public class MovieServiceTest {
 		int score = movieService.calculateScore();
 		assertEquals(0, score);
 		
+	}
+	
+	@Test
+	public void checkAnswerTest() throws URISyntaxException {
+		movieService.setRandomMovies();
+		List<Movie> levelMovies = movieService.getLevel();
+		Movie answer = levelMovies.get(0).getPopularity() > levelMovies.get(1).getPopularity() ? levelMovies.get(0) : levelMovies.get(1);
+		System.out.println(apiController.checkAnswer(answer.getMovieName()));
 	}
 }

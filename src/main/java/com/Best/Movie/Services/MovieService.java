@@ -22,6 +22,7 @@ public class MovieService{
 	
 	private Movie movie1 = new Movie();
 	private Movie movie2 = new Movie();
+	private byte answer = 0;
 	private List<Movie> playedMovies = new ArrayList<>();
 	private List<Movie> availableMovies = new ArrayList<>();
 	private List<Movie> levelMove = new ArrayList<>();
@@ -76,7 +77,9 @@ public class MovieService{
 	}
 	
 	
-	public List<Movie> getLevel() {
+	public List<Movie> getFirstLevel() {	
+		levelMove.clear();
+
 		movie1 = this.availableMovies.get(0);
 		movie2 = this.availableMovies.get(1);
 		
@@ -86,26 +89,52 @@ public class MovieService{
 		playedMovies.add(movie1);
 		playedMovies.add(movie2);
 		
-		availableMovies.remove(0);
-		availableMovies.remove(1);
+		availableMovies.remove(movie1);
+		availableMovies.remove(movie2);
+		return levelMove;
+	}
+	
+	public List<Movie> getLevel() {
+		if (firstLevel == true) {
+			getFirstLevel();
+		} else {
+
+			movie1 = this.answer != 1 ? this.availableMovies.get(0) : movie1;
+			movie2 = this.answer != 2 ? this.availableMovies.get(0) : movie2;
+			
+			levelMove.add(movie1);
+			levelMove.add(movie2);
+			
+			playedMovies.add(movie1);
+			playedMovies.add(movie2);
+			
+			availableMovies.remove(movie1);
+			availableMovies.remove(movie2);		
+		}
+		System.out.println(movie1.getMovieName() + " Value: " + movie1.getPopularity());
+		System.out.println(movie2.getMovieName() + " Value: " + movie2.getPopularity());
+				
 		return levelMove;
 	}
 	
 	public boolean checkAnswer(String playerAnswer) {
-		
-		if ( playerAnswer.equalsIgnoreCase(this.movie1.getMovieName()) && this.movie1.getPopularity() >= this.movie2.getPopularity() ) {
-			System.out.println("ANSWER = " + movie1.getMovieName());
-			return true;
-		}
-		if ( playerAnswer.equalsIgnoreCase(this.movie2.getMovieName()) && this.movie1.getPopularity() <= this.movie2.getPopularity() ) {
-			System.out.println("ANSWER = " + movie2.getMovieName());
-			return true;
-		}
 		if (this.firstLevel) {
 			this.firstLevel = false;
 		}
 		
-		return false;		
+		if ( playerAnswer.equalsIgnoreCase(this.movie1.getMovieName()) && this.movie1.getPopularity() >= this.movie2.getPopularity() ) {
+			this.answer = 1;
+			System.out.println("ANSWER = " + movie1.getMovieName());
+			return true;
+		}
+		
+		if ( playerAnswer.equalsIgnoreCase(this.movie2.getMovieName()) && this.movie1.getPopularity() <= this.movie2.getPopularity() ) {
+			this.answer = 2;
+			System.out.println("ANSWER = " + movie2.getMovieName());
+			return true;
+		}
+		
+		return false;
 	}
 	
 	public void resetGame() {
@@ -113,6 +142,12 @@ public class MovieService{
 		this.levelMove.clear();
 		this.availableMovies.clear();
 		this.firstLevel = true;
+	}
+	
+	public void newLevel() {
+		if (this.firstLevel == false) {
+			this.levelMove.clear();
+		}		
 	}
 	
 	public int calculateScore() {

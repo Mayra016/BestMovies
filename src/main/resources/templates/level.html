@@ -15,57 +15,102 @@
 	<div class="page-background">
 		<div class="container">
 			<div class="header-bar">
-				<button class="menu-btn" onclick="menu()">
+				<button class="menu-btn left" onclick="menu()">
 				    <img class="menu-logo" src="/images/menu-logo.png" alt="menu logo" />
-				    <h5 th:text="#{MENU}"></h5>
+				    <h5 >Menu</h5>
 				</button>
-				<div class="score">
+				<div class="score rigth">
 					<h5>Score: <h6 th:text="${score}"></h6></h5>
 				</div>	
 			</div>
-			<div class="movies" th:each="movie : ${levelMovies}">
-				<form class="movie" thaction="@{/checkAnswer}" method="POST">
-					<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-					<button type="submit" onclick="checkAnswer(/*[(${movie.movieName})]*/)">
-						<img th:src="${movie.imageURL}">
-						<h1 th:text="${movie.movieName}"></h1>
-					</button>							
-				</form> 
-			</div>	
-			<div id="lost" class="lost" style="display: none;">
-				<h2>You have lost</h2>
-				<button th:href="@{/menu}">Play again</button>
+			<div class="game-section">			
+				<div class="ask">
+					<h1>What is the most popular film?</h1>
+				</div>
+				<div class="movies" >
+					<div class="movie col-6" th:each="movie : ${levelMovies}">
+						<a class="check-answer-link" type="submit" data-movie-name="${movie.movieName}">
+							<img th:src="${movie.imageURL}">
+							<h1 th:text="${movie.movieName}"></h1>
+						</a>							
+					</div> 
+				</div>	
+			</div>
+			<div class="efect">
+				
 			</div>
 		</div>
 		
 	</div>
-		
+	
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script th:inline="javascript">
 
-    function checkAnswer(movieName) {
-        var csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
-    
-        console.log("movie name", movieName);
-        // Enviar el token con cada solicitud
-        fetch('http://localhost:8080/checkAnswer', {
-            method: 'POST',
-            mode: 'cors',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('input[name="_csrf"]').value
-            },
-            body: JSON.stringify({playerAnswer: movieName})
-        })
-        .catch(error => {
-            console.error("Error fetching letters:", error);
+	 $(document).ready(function() {
+        // Event listener
+        $(".check-answer-link").on("click", function(event) {
+
+            event.preventDefault();
+
+            // Get movie's name and build url
+            var movieName = $(this).find("h1").text();
+   			var href = "/checkAnswer/" + movieName;
+			
+            // AJAX petition to server
+            $.get(href, function(data) {
+                console.log("data", data);
+                console.log("status", status);
+                if (data == "TRUE") {
+					$(".game-section").addClass("green");
+	                setTimeout(function() {
+	                    window.location.href = "/level";
+	                }, 2000);
+				} 
+				if (data == "FALSE") {
+					console.error("Error en la solicitud:", data);
+	                $(".game-section").addClass("red");
+
+					swal({
+					  title: "You have lost!",
+					  text: "Press the button to go to the menu",
+					  icon: "error",
+					  buttons: {
+					    goToMenu: {
+					      text: "Go to Menu",
+					      value: "goToMenu",
+					    },
+					    cancel: "Cancel",
+					  },
+					})
+					.then((value) => {
+					  switch (value) {
+					    case "goToMenu":
+					      window.location.href = "/menu"; 
+					      break;
+					
+					    default:
+					   
+					      break;
+					  }
+					});
+				}
+
+            })  
+            .fail(function(status) {
+    			console.error("Error en la solicitud:", data);
+                
+            });   	           
         });
-    }
+    });
+
+
 	function menu() {
 		window.location.href = "/menu";
 	}
 	
 	
 </script>
+
 </body>
 </html>
