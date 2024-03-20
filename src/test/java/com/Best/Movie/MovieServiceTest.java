@@ -7,6 +7,7 @@ import static org.junit.Assert.assertEquals;
 
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
@@ -45,7 +46,7 @@ public class MovieServiceTest {
 		assertEquals(false, levelMovies.isEmpty());	
 	}
 	
-	@Test
+	@RepeatedTest(4)
 	public void getLevelTestRepeated() throws URISyntaxException {
 		movieService.setRandomMovies();
 		List<Movie> levelMovies = movieService.getLevel();
