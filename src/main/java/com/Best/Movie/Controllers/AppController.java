@@ -26,6 +26,11 @@ public class AppController {
 	
 	@GetMapping("/menu")
 	public String getMenu() {
+		if (levelMovies != null) {
+			levelMovies.clear();
+			score = 0;
+			win = false;
+		}		
 		movieService.resetGame();
 		return "menu";
 	}
@@ -42,25 +47,4 @@ public class AppController {
 		model.addAttribute("score", score);
 		return "level";
 	}
-	
-	@GetMapping("/lost")
-	public String getLost(Model model){
-		model.addAttribute("levelMovies", levelMovies);
-		model.addAttribute("score", score);
-		return "lost";
-	}
-	/*
-	@GetMapping("/checkAnswer/{playerAnswer}")
-	public String checkAnswer(@PathVariable String playerAnswer) {
-		System.out.println("PLAYER ANSWER: " + playerAnswer);
-		if (movieService.checkAnswer(playerAnswer)) {
-			System.out.println("PLAYER ANSWER: " + playerAnswer);
-			movieService.calculateScore();
-			levelMovies.clear();
-			return "redirect:/level";
-		} else {
-			movieService.resetGame();
-			return "redirect:/lost";
-		}		
-	}*/
 }

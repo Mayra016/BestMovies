@@ -20,7 +20,6 @@ public class APIController {
 		System.out.println("PLAYER ANSWER: " + playerAnswer);
 		if (movieService.checkAnswer(playerAnswer)) {
 			System.out.println("PLAYER ANSWER: " + playerAnswer);
-			movieService.calculateScore();
             return ResponseEntity.status(HttpStatus.OK).body("TRUE");
         } else {
         	movieService.resetGame();

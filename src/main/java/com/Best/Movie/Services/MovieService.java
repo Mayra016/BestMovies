@@ -140,8 +140,11 @@ public class MovieService{
 	public void resetGame() {
 		this.playedMovies.clear();
 		this.levelMove.clear();
-		this.availableMovies.clear();
+		//this.availableMovies.clear();
 		this.firstLevel = true;
+		this.movie1 = new Movie();
+		this.movie2 = new Movie();
+		this.score = 0;
 	}
 	
 	public void newLevel() {
