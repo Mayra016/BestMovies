@@ -45,6 +45,11 @@ import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactor
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+//import org.springframework.boot.web.embedded.undertow.UndertowServletWebServerFactory;
+//import org.springframework.boot.web.server.WebServerFactoryCustomizer;
+//import io.undertow.UndertowOptions;
+
+
 
 @EnableWebSecurity
 @Configuration
@@ -55,8 +60,17 @@ public class SecurityConfig extends WebSecurityConfiguration {
 	@Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http
-        	.cors().configurationSource(corsConfigurationSource())
-	        .and()    
+	    	.headers(headers -> headers
+	            .frameOptions(frameOptions -> frameOptions
+	                .disable()
+	            )
+	        )
+	    	.cors().configurationSource(corsConfigurationSource())
+	    	.and()
+	        .requiresChannel()
+	        .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null)
+	        .requiresSecure()
+	        .and() 
 	        .authorizeRequests(requests -> requests
                     .requestMatchers(new AntPathRequestMatcher("/menu/**")).permitAll()
                     .requestMatchers(new AntPathRequestMatcher("/checkAnswer/**")).permitAll()
@@ -101,6 +115,7 @@ public class SecurityConfig extends WebSecurityConfiguration {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("http://localhost:8080"); 
         configuration.addAllowedOrigin("http://localhost:8443"); 
+        configuration.addAllowedOrigin("https://bestmovies-as89.onrender.com"); 
         configuration.addAllowedMethod("GET");
         configuration.addAllowedMethod("POST");
         configuration.addAllowedHeader("Access-Control-Allow-Headers");
@@ -113,5 +128,6 @@ public class SecurityConfig extends WebSecurityConfiguration {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
 }   
     

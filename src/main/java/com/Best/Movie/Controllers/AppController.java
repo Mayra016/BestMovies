@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.Best.Movie.Entities.Movie;
 import com.Best.Movie.Services.MovieService;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.PushBuilder;
+
 @Controller
 public class AppController {
 	
@@ -25,24 +28,39 @@ public class AppController {
 	boolean win = false;
 	
 	@GetMapping("/menu")
-	public String getMenu() {
+	public String getMenu(HttpServletRequest request) {
 		if (levelMovies != null) {
 			levelMovies.clear();
 			score = 0;
 			win = false;
-		}		
+		}
 		movieService.resetGame();
+	    PushBuilder pushBuilder = request.newPushBuilder();
+	    if (pushBuilder != null) {
+	        pushBuilder.path("/css/menu.css").push();
+	        pushBuilder.path("/images/background.jpg").push();
+	    }
+	    pushBuilder = null;
+	    
 		return "menu";
 	}
 	
 	@GetMapping("/level")
-	public String getLevel(Model model) throws URISyntaxException {
+	public String getLevel(HttpServletRequest request, Model model) throws URISyntaxException {
 		if ( movieService.isAvailableMoviesNull() ) {
 			movieService.setRandomMovies();
 		}
 		movieService.newLevel();
 		levelMovies = movieService.getLevel();
 		score = movieService.calculateScore();
+	    PushBuilder pushBuilder = request.newPushBuilder();
+	    if (pushBuilder != null) {
+	        pushBuilder.path("/css/level.css").push();
+	        pushBuilder.path("/images/background.jpg").push();
+	        pushBuilder.path("/images/menu-logo.jpg").push();
+	    }
+	    pushBuilder = null;
+	    
 		model.addAttribute("levelMovies", levelMovies);
 		model.addAttribute("score", score);
 		return "level";

@@ -44,7 +44,7 @@ public class MovieService{
 	    	    .header("Authorization", bearerToken)
 	    	    .method("GET", HttpRequest.BodyPublishers.noBody())
 	    	    .build();
-	    
+	    System.out.println("bearer " + bearerToken);
 	        	
 		try {
 	        // Send petition and get response
