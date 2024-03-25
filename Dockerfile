@@ -5,6 +5,8 @@ ARG PORT
 ENV PORT=${PORT}
 ARG bearerToken
 ENV bearerToken=${bearerToken}
+ARG jks
+ENV jks=${jks}
 
 COPY . .
 RUN mvn clean package -DskipTests
