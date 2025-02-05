@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Best Movie</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=EB+Garamond:wght@600;700;800&family=Spicy+Rice&display=swap" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="/css/level.css">
+
+
+</head>
+<body>
+	<div class="page-background">
+		<div class="container">
+			<div class="header-bar">
+				<button class="menu-btn left" onclick="menu()">
+				    <img class="menu-logo" src="/images/menu-logo.png" alt="menu logo" />
+				    <h5 >Menu</h5>
+				</button>
+				<div class="score rigth">
+					<h5>Score: <h6 th:text="${score}"></h6></h5>
+				</div>	
+			</div>
+			<div class="game-section">			
+				<div class="ask">
+					<h1>What is the most popular film?</h1>
+				</div>
+				<div class="movies" >
+					<div class="movie col-6" th:each="movie : ${levelMovies}">
+						<a class="check-answer-link" type="submit" data-movie-name="${movie.movieName}">
+							<img th:src="${movie.imageURL}">
+							<h1 th:text="${movie.movieName}"></h1>
+						</a>							
+					</div> 
+				</div>	
+			</div>
+			<div class="efect">
+				
+			</div>
+		</div>
+		
+	</div>
+	
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script th:inline="javascript">
+
+	 $(document).ready(function() {
+        // Event listener
+        $(".check-answer-link").on("click", function(event) {
+
+            event.preventDefault();
+
+            // Get movie's name and build url
+            var movieName = $(this).find("h1").text();
+   			var href = "/checkAnswer/" + movieName;
+			
+            // AJAX petition to server
+            $.get(href, function(data) {
+                console.log("data", data);
+                console.log("status", status);
+                if (data == "TRUE") {
+					$(".game-section").addClass("green");
+	                setTimeout(function() {
+	                    window.location.href = "/level";
+	                }, 2000);
+				} 
+				if (data == "FALSE") {
+					console.error("Error en la solicitud:", data);
+	                $(".game-section").addClass("red");
+
+					swal({
+					  title: "You have lost!",
+					  text: "Press the button to go to the menu",
+					  icon: "error",
+					  buttons: {
+					    goToMenu: {
+					      text: "Go to Menu",
+					      value: "goToMenu",
+					    },
+					    cancel: "Cancel",
+					  },
+					})
+					.then((value) => {
+					  switch (value) {
+					    case "goToMenu":
+					      window.location.href = "/menu"; 
+					      break;
+					
+					    default:
+					   
+					      break;
+					  }
+					});
+				}
+
+            })  
+            .fail(function(status) {
+    			console.error("Error en la solicitud:", data);
+                
+            });   	           
+        });
+    });
+
+
+	function menu() {
+		window.location.href = "/menu";
+	}
+	
+	
+</script>
+
+</body>
+</html>

@@ -1,0 +1,155 @@
+body{
+	display: flex;
+	flex-direction: column;
+	padding: 0px;
+	background: url("/images/background.jpg");
+}
+
+.container {
+	margin: 0px auto;
+}
+
+.header-bar {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	width: 100%;
+	padding: 20px;
+}
+
+.movies {
+	padding: 20px;
+    display: flex;
+    flex-direction: inline-block;
+    justify-content: space-between;
+    text-align: center;
+    width: 100%;
+    gap: 20px;
+}
+
+.movie a img {
+	width: 80%;
+	height: 80%;
+	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.movie {
+	width: 50%;
+	height: 60%;
+}
+
+a {
+	text-decoration: none;
+	color: black;
+}
+
+.menu-btn {
+	display: flex;
+	flex-direction: row;
+	width: auto;
+	height: auto;	
+	align-items: center;
+	gap: 10px;
+	border: none;
+	border-radius: 10px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;	
+	
+}
+
+button:hover, img:hover {
+	border-color: var(--blue);
+    transform: scale(1.07);
+}
+
+.menu-btn h5 {
+	padding-top: 10px;
+}
+
+button .menu-logo {
+	width: 20px;
+	height: 20px;
+	transition: transform 0.3s ease;
+}
+
+.score {
+	display: flex;
+	flex-direction: row;
+	gap: 5px;
+	background-color: white;
+	border: none;
+	border-radius: 10px;
+	width: auto;
+	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+} 
+
+.score h5,  .score h6 {
+	align-items: center;
+	padding: 10px 5px 0px 5px;
+}
+
+h5, h6 {
+	font-size: 20px;
+	text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+.ask {
+	display: flex;
+	justify-content: center;
+	padding-top: 20px;
+}
+
+.game-section, .effect {
+	background-color: rgba(255,255,255,0.7);
+	border-radius: 10px;
+	width: auto;
+	height: 70%;
+	padding-right: 20px;
+	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+	z-index: 2;
+}
+
+.effect {
+	background-color: rgba(255, 0, 0);
+	z-index: 5;
+}
+
+a h1 {
+	padding-top: 20px;
+}
+
+.green {
+	background-color: rgba(0, 200, 0, 0.6);
+	animation: fadein 2s linear infinite;	
+}
+
+.red {
+	background-color: rgba(180, 0, 0, 0.6);
+	animation: fadein 2s linear infinite;	
+}
+
+@keyframes slideRight {
+    0% {
+        opacity: 0%;
+    }
+    100% {
+        opacity: 100%;
+    }
+}
+
+
+@keyframes slideRight {
+    0% {
+        margin-left: 0%;
+    }
+    100% {
+        margin-left: 100%;
+    }
+}
+
+
+
